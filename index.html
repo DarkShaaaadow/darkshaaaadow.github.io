@@ -1,0 +1,1249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <title>Quick Question 💘</title>
+
+  <style>
+    :root{
+      --bg1:#120016;
+      --bg2:#2a0030;
+      --card:#ffffff10;
+      --card2:#ffffff14;
+      --text:#fff;
+      --muted:#ffffffb3;
+      --pink:#ff4fd8;
+      --hot:#ff2f6d;
+      --gold:#ffd36a;
+      --mint:#44ffcc;
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --radius: 22px;
+
+      --play-h: clamp(240px, 42vh, 460px);
+      --page-pad: 22px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      overflow-x:hidden;
+      overflow-y:auto;
+      background:
+        radial-gradient(1200px 600px at 10% 10%, rgba(255,79,216,.20), transparent 55%),
+        radial-gradient(900px 500px at 90% 20%, rgba(68,255,204,.14), transparent 60%),
+        radial-gradient(1000px 700px at 50% 90%, rgba(255,211,106,.10), transparent 60%),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+    }
+
+    /* Backdrop layers */
+    .twinkle{
+      position: fixed;
+      inset: 0;
+      pointer-events:none;
+      z-index: 0;
+      opacity:.22;
+      filter: drop-shadow(0 0 6px rgba(255,255,255,.15));
+      background-image:
+        radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.70), transparent 60%),
+        radial-gradient(1.6px 1.6px at 70% 20%, rgba(255,255,255,.55), transparent 60%),
+        radial-gradient(1.8px 1.8px at 60% 80%, rgba(255,255,255,.55), transparent 60%),
+        radial-gradient(1.2px 1.2px at 30% 75%, rgba(255,255,255,.45), transparent 60%),
+        radial-gradient(1.5px 1.5px at 85% 65%, rgba(255,255,255,.55), transparent 60%),
+        radial-gradient(1.1px 1.1px at 40% 15%, rgba(255,255,255,.40), transparent 60%);
+      animation: floatStars 14s linear infinite;
+    }
+    .twinkle::before, .twinkle::after{
+      position:absolute;
+      inset:-40px;
+      content:"";
+      background-image:
+        radial-gradient(2px 2px at 12% 56%, rgba(255,255,255,.60), transparent 60%),
+        radial-gradient(1.2px 1.2px at 52% 18%, rgba(255,255,255,.45), transparent 60%),
+        radial-gradient(1.6px 1.6px at 88% 42%, rgba(255,255,255,.55), transparent 60%),
+        radial-gradient(1.1px 1.1px at 34% 22%, rgba(255,255,255,.40), transparent 60%),
+        radial-gradient(1.4px 1.4px at 64% 76%, rgba(255,255,255,.50), transparent 60%);
+      pointer-events:none;
+      filter: drop-shadow(0 0 6px rgba(255,255,255,.12));
+    }
+    .twinkle::before{ opacity:.16; animation: floatStars 20s linear infinite; transform: rotate(7deg) scale(1.1); }
+    .twinkle::after{ opacity:.12; animation: floatStars 26s linear infinite; transform: rotate(-9deg) scale(1.15); }
+
+    @keyframes floatStars{
+      0%{ transform: translate3d(0,0,0); }
+      100%{ transform: translate3d(0,-40px,0); }
+    }
+
+    .hearts{
+      position: fixed;
+      inset:0;
+      pointer-events:none;
+      z-index: 0;
+      opacity:.22;
+      filter: drop-shadow(0 0 8px rgba(255,79,216,.15));
+    }
+    .heart{
+      position:absolute;
+      width: 18px; height: 18px;
+      background: radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,.0) 55%),
+                  linear-gradient(135deg, rgba(255,79,216,.9), rgba(255,47,109,.85));
+      transform: rotate(45deg);
+      border-radius: 4px;
+      animation: rise linear infinite;
+      opacity:.75;
+    }
+    .heart::before, .heart::after{
+      content:"";
+      position:absolute;
+      width:18px; height:18px;
+      background: inherit;
+      border-radius: 50%;
+    }
+    .heart::before{ left:-9px; top:0; }
+    .heart::after{ left:0; top:-9px; }
+    @keyframes rise{
+      0%{ transform: translateY(110vh) rotate(45deg) scale(.9); opacity:0; }
+      10%{ opacity:.8; }
+      100%{ transform: translateY(-25vh) rotate(45deg) scale(1.25); opacity:0; }
+    }
+
+    /* Layout */
+    .wrap{
+      position:relative;
+      z-index: 2;
+      min-height: 100vh;
+      padding: var(--page-pad);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .card{
+      width:min(920px, 96vw);
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border:1px solid rgba(255,255,255,.16);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 22px 22px 18px;
+      position:relative;
+      max-height: calc(100vh - (var(--page-pad) * 2));
+      overflow: auto;
+    }
+
+    .top{
+      display:flex;
+      gap:16px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.22);
+      user-select:none;
+      white-space: nowrap;
+    }
+    .dot{
+      width:10px; height:10px;
+      border-radius:999px;
+      background: radial-gradient(circle, var(--mint), transparent 60%), var(--mint);
+      box-shadow: 0 0 14px rgba(68,255,204,.55);
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse{
+      0%,100%{ transform: scale(.9); opacity:.8; }
+      50%{ transform: scale(1.25); opacity:1; }
+    }
+
+    h1{
+      margin: 14px 0 6px;
+      font-size: clamp(26px, 4vw, 42px);
+      letter-spacing: .2px;
+      line-height: 1.12;
+    }
+    .sub{
+      margin:0 0 16px;
+      color: rgba(255,255,255,.72);
+      font-size: 14.5px;
+      line-height: 1.45;
+    }
+
+    .mascot{
+      width: min(300px, 40vw);
+      height:auto;
+      flex: 0 0 auto;
+    }
+
+    .question{
+      padding: 14px 14px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.18);
+      position:relative;
+    }
+
+    .nameLine{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-bottom: 8px;
+      color: rgba(255,255,255,.92);
+    }
+    .pill{
+      padding: 7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.08);
+      font-size: 13px;
+      user-select:none;
+    }
+    .pill b{ font-weight:700; }
+
+    .bigQ{
+      font-size: clamp(20px, 3.2vw, 32px);
+      margin: 6px 0 10px;
+      line-height: 1.15;
+    }
+
+    .status{
+      margin: 0 0 12px;
+      color: rgba(255,255,255,.70);
+      min-height: 24px;
+    }
+
+    /* HUD */
+    .hud{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:stretch;
+      margin: 8px 0 10px;
+    }
+    .panel{
+      flex: 1 1 260px;
+      min-width: 240px;
+      padding: 10px 10px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+    }
+    .panelTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 8px;
+      color: rgba(255,255,255,.80);
+      font-size: 12.8px;
+    }
+    .bar{
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.10);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .fill{
+      height: 100%;
+      width: 8%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(68,255,204,.95), rgba(255,211,106,.95), rgba(255,79,216,.95));
+      box-shadow: 0 0 18px rgba(255,79,216,.25);
+      transition: width .25s ease;
+    }
+    .fill.alt{
+      background: linear-gradient(90deg, rgba(255,255,255,.85), rgba(255,211,106,.95), rgba(255,47,109,.95));
+      box-shadow: 0 0 18px rgba(255,211,106,.18);
+    }
+    .miniNote{
+      flex: 2 1 320px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.16);
+      color: rgba(255,255,255,.78);
+      font-size: 12.8px;
+      line-height: 1.35;
+    }
+    .log{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      line-height: 1.3;
+      color: rgba(255,255,255,.72);
+      background: rgba(0,0,0,.14);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-top: 10px;
+      overflow:auto;
+      max-height: 120px;
+      white-space: pre-wrap;
+    }
+
+    /* Playground */
+    .btnRow{
+      position:relative;
+      width: 100%;
+      height: var(--play-h);
+      margin-top: 8px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.10);
+      background:
+        radial-gradient(900px 240px at 20% 30%, rgba(255,79,216,.08), transparent 60%),
+        radial-gradient(800px 240px at 80% 70%, rgba(68,255,204,.07), transparent 62%),
+        rgba(255,255,255,.04);
+      overflow: hidden;
+    }
+
+    /* Scope positioning to only the playground buttons */
+    button{
+      appearance:none;
+      border:none;
+      background: none;
+      color: inherit;
+      font: inherit;
+    }
+    .btnRow > button{
+      cursor:pointer;
+      padding: 12px 16px;
+      border-radius: 14px;
+      color: #0c0610;
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: .2px;
+      transition: transform .12s ease, filter .12s ease, opacity .12s ease;
+      user-select:none;
+      touch-action: manipulation;
+      position:absolute;
+      will-change: left, top, transform;
+    }
+
+    .yes{
+      background: linear-gradient(135deg, #ffe07c, #ff5ad6);
+      box-shadow: 0 10px 28px rgba(255,79,216,.26);
+      z-index: 2;
+    }
+    .yes:active{ transform: translateY(1px) scale(.99); }
+
+    /* ~30% smaller NO */
+    .no{
+      padding: 8px 11px;
+      font-size: 11px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(255,255,255,.85), rgba(255,255,255,.65));
+      opacity:.92;
+      z-index: 1;
+    }
+    .no:active{ transform: translateY(1px) scale(.99); }
+
+    .hint{
+      color: rgba(255,255,255,.70);
+      font-size: 12.8px;
+      margin: 10px 0 0;
+    }
+
+    /* Result */
+    .result{
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border:1px dashed rgba(255,255,255,.26);
+      background: rgba(0,0,0,.18);
+      display:none;
+    }
+    .result.show{ display:block; }
+    .result p{ margin: 6px 0; line-height:1.35; color: rgba(255,255,255,.92); }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 10px;
+    }
+    .smallBtn{
+      position: static;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.92);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 750;
+      font-size: 13.5px;
+      letter-spacing: .2px;
+      user-select:none;
+    }
+    .smallBtn:active{ transform: translateY(1px); }
+
+    /* Full viewport FX */
+    canvas#fx{
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events:none;
+      z-index: 1;
+    }
+
+    /* Sparkles */
+    .sparkle{
+      position:fixed;
+      width: 10px; height: 10px;
+      left: 0; top: 0;
+      pointer-events:none;
+      z-index: 3;
+      transform: translate(-50%,-50%) rotate(0deg);
+      opacity: 0.95;
+      filter: drop-shadow(0 0 10px rgba(255,211,106,.35));
+      animation: pop 650ms ease-out forwards;
+    }
+    .sparkle::before{
+      content:"";
+      position:absolute; inset:0;
+      background: conic-gradient(from 0deg, #fff, var(--gold), #fff, var(--pink), #fff);
+      clip-path: polygon(50% 0%, 62% 34%, 100% 50%, 62% 66%, 50% 100%, 38% 66%, 0% 50%, 38% 34%);
+      border-radius: 2px;
+    }
+    @keyframes pop{
+      0%{ transform: translate(-50%,-50%) scale(.6) rotate(0deg); opacity: 0; }
+      20%{ opacity: .95; }
+      100%{ transform: translate(-50%,-75%) scale(1.55) rotate(160deg); opacity: 0; }
+    }
+
+    /* Toast (non-interactive) */
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%) translateY(18px);
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.18);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: rgba(255,255,255,.92);
+      padding: 10px 12px;
+      border-radius: 999px;
+      box-shadow: 0 14px 40px rgba(0,0,0,.35);
+      max-width: min(520px, 92vw);
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 4;
+      transition: opacity .18s ease, transform .18s ease;
+      font-size: 13px;
+    }
+    .toast.show{
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Tiny shake for drama */
+    @keyframes nudge {
+      0% { transform: translate3d(0,0,0); }
+      20% { transform: translate3d(-2px, 0, 0); }
+      40% { transform: translate3d(2px, 0, 0); }
+      60% { transform: translate3d(-1px, 0, 0); }
+      80% { transform: translate3d(1px, 0, 0); }
+      100% { transform: translate3d(0,0,0); }
+    }
+    .card.nudge { animation: nudge 220ms ease; }
+
+    /* LOCK GAME AFTER YES */
+    body.game-locked #btnRow,
+    body.game-locked #btnRow *{
+      pointer-events: none !important;
+    }
+    body.game-locked #btnRow{
+      filter: saturate(.95) brightness(.95);
+    }
+
+    @media (max-width: 740px){
+      :root{
+        --page-pad: 16px;
+        --play-h: clamp(220px, 36vh, 380px);
+      }
+    }
+    @media (max-height: 720px){
+      .wrap{ align-items:flex-start; }
+      .card{ margin-top: 10px; }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .twinkle, .twinkle::before, .twinkle::after,
+      .heart, .dot { animation: none !important; }
+      .btnRow > button{ transition: none; }
+      .sparkle{ display:none; }
+      .card.nudge{ animation: none; }
+      .toast{ transition:none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="twinkle" aria-hidden="true"></div>
+  <div class="hearts" aria-hidden="true" id="hearts"></div>
+  <canvas id="fx"></canvas>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="wrap">
+    <main class="card" id="card" role="main" aria-label="Valentine page">
+      <div class="top">
+        <div class="badge" title="Totally serious business.">
+          <span class="dot" aria-hidden="true"></span>
+          <span id="badgeText">Sparkle Mode: ON</span>
+        </div>
+
+        <svg class="mascot" viewBox="0 0 420 260" aria-label="Cute cartoon heart character">
+          <defs>
+            <linearGradient id="g1" x1="0" x2="1">
+              <stop offset="0" stop-color="#ff5ad6"/>
+              <stop offset="1" stop-color="#ff2f6d"/>
+            </linearGradient>
+            <linearGradient id="g2" x1="0" x2="1">
+              <stop offset="0" stop-color="#ffd36a"/>
+              <stop offset="1" stop-color="#ffffff"/>
+            </linearGradient>
+            <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="3" result="b"/>
+              <feMerge>
+                <feMergeNode in="b"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+
+          <g filter="url(#soft)">
+            <path d="M210 220
+                     C120 160 70 120 70 72
+                     C70 38 98 16 132 16
+                     C160 16 186 30 210 54
+                     C234 30 260 16 288 16
+                     C322 16 350 38 350 72
+                     C350 120 300 160 210 220Z"
+                  fill="url(#g1)" stroke="rgba(255,255,255,.35)" stroke-width="4"/>
+            <circle cx="150" cy="120" r="12" fill="rgba(255,255,255,.25)"/>
+            <circle cx="270" cy="120" r="12" fill="rgba(255,255,255,.25)"/>
+            <circle cx="172" cy="105" r="10" fill="#120016"/>
+            <circle cx="248" cy="105" r="10" fill="#120016"/>
+            <circle cx="176" cy="101" r="3" fill="#fff"/>
+            <circle cx="252" cy="101" r="3" fill="#fff"/>
+            <path d="M196 134 C210 152 224 134 236 128"
+                  fill="none" stroke="#120016" stroke-width="6" stroke-linecap="round"/>
+            <path d="M355 36 L363 54 L381 62 L363 70 L355 88 L347 70 L329 62 L347 54 Z"
+                  fill="url(#g2)" opacity=".9"/>
+          </g>
+        </svg>
+      </div>
+
+      <h1 id="title">A dangerously important question…</h1>
+      <p class="sub" id="subtitle">
+        Please remain calm. Cupid is updating his drivers and rebooting feelings.exe.
+      </p>
+
+      <section class="question" id="arena">
+        <div class="nameLine">
+          <span class="pill">To: <b id="toName">you</b></span>
+          <span class="pill">From: <b id="fromName">someone adorable</b></span>
+          <span class="pill">No-clicks: <b id="noCount">0</b></span>
+        </div>
+
+        <div class="bigQ" id="questionText">Will you be my Valentine?</div>
+        <p class="status" id="statusText">Pick a button. One of them is a trap. (It’s NO.)</p>
+
+        <div class="hud">
+          <div class="panel" aria-label="Romance meter">
+            <div class="panelTop">
+              <span id="meterLabel">Romance Engine</span>
+              <span id="meterPct">8%</span>
+            </div>
+            <div class="bar"><div class="fill" id="meterFill"></div></div>
+          </div>
+
+          <div class="panel" aria-label="Butterfly committee vote">
+            <div class="panelTop">
+              <span id="voteLabel">Butterfly Committee</span>
+              <span id="votePct">Yes: 52%</span>
+            </div>
+            <div class="bar"><div class="fill alt" id="voteFill"></div></div>
+          </div>
+
+          <div class="miniNote" id="miniNote">
+            System note: the NO button has a flight response and a tiny ego.
+            <div class="log" id="logBox"></div>
+          </div>
+        </div>
+
+        <div class="btnRow" id="btnRow" aria-label="Button playground">
+          <button class="yes" id="yesBtn" type="button">Yes 💘</button>
+          <button class="no" id="noBtn" type="button" aria-label="No button">No 🙃</button>
+        </div>
+
+        <p class="hint" id="hintText">
+          Tip: get close to NO and it panics. Rage mode sometimes swaps the buttons. Please scream politely.
+        </p>
+
+        <div class="result" id="resultBox" aria-live="polite">
+          <p id="resultLine1"></p>
+          <p id="resultLine2"></p>
+          <p id="resultLine3"></p>
+
+          <div class="actions" id="actions" style="display:none;">
+            <button class="smallBtn" id="restartBtn" type="button">Restart (dangerous)</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const CONFIG = {
+      defaultTo: "you",
+      defaultFrom: "someone adorable",
+
+      sparkleRateMs: 20,
+
+      proximityRadiusBase: 175,
+      proximityGrowthPerNo: 12,
+      moveTries: 32,
+      dodgePadding: 12,
+
+      rageMode: true,
+      rageSwapChanceBase: 0.22,
+      rageSwapChancePerNo: 0.02,
+      rageSwapCooldownMs: 650,
+
+      typeSpeedMs: 14
+    };
+
+    const params = new URLSearchParams(location.search);
+    const to = (params.get("to") || CONFIG.defaultTo).trim() || CONFIG.defaultTo;
+    const from = (params.get("from") || CONFIG.defaultFrom).trim() || CONFIG.defaultFrom;
+
+    const toName = document.getElementById("toName");
+    const fromName = document.getElementById("fromName");
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const btnRow = document.getElementById("btnRow");
+    const arena = document.getElementById("arena");
+    const card = document.getElementById("card");
+
+    const noCountEl = document.getElementById("noCount");
+    const questionText = document.getElementById("questionText");
+    const statusText = document.getElementById("statusText");
+    const badgeText = document.getElementById("badgeText");
+    const miniNote = document.getElementById("miniNote");
+    const logBox = document.getElementById("logBox");
+
+    const meterFill = document.getElementById("meterFill");
+    const meterPct = document.getElementById("meterPct");
+    const meterLabel = document.getElementById("meterLabel");
+
+    const voteFill = document.getElementById("voteFill");
+    const votePct = document.getElementById("votePct");
+    const voteLabel = document.getElementById("voteLabel");
+
+    const resultBox = document.getElementById("resultBox");
+    const resultLine1 = document.getElementById("resultLine1");
+    const resultLine2 = document.getElementById("resultLine2");
+    const resultLine3 = document.getElementById("resultLine3");
+    const actions = document.getElementById("actions");
+    const restartBtn = document.getElementById("restartBtn");
+
+    const hearts = document.getElementById("hearts");
+    const toast = document.getElementById("toast");
+
+    toName.textContent = to;
+    fromName.textContent = from;
+
+    function spawnBackgroundHearts(){
+      const count = 18;
+      for(let i=0;i<count;i++){
+        const h = document.createElement("div");
+        h.className = "heart";
+        const left = Math.random()*100;
+        const delay = Math.random()*8;
+        const dur = 10 + Math.random()*14;
+        const size = 12 + Math.random()*18;
+        h.style.left = left + "vw";
+        h.style.animationDelay = delay + "s";
+        h.style.animationDuration = dur + "s";
+        h.style.width = size + "px";
+        h.style.height = size + "px";
+        hearts.appendChild(h);
+      }
+    }
+    spawnBackgroundHearts();
+
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // Funny content
+    const noLines = [
+      "No? Interesting. Bold. Incorrect, but bold.",
+      "NO is practicing parkour. Please respect its hobbies.",
+      "NO button just yelled: “I’m not built for commitment!!”",
+      "Romance firewall blocked that request: HTTP 451 (Too Cute).",
+      "You’re chasing NO like it has your Wi‑Fi password.",
+      "NO activated stealth mode. (It is not very good at stealth.)",
+      "The button is unionized. It requires snack breaks.",
+      "NO filed a bug report: “User too determined, pls nerf.”",
+      "You vs NO: a tragic love story in 60fps.",
+      "I’d accept NO… but the universe said “lol no.”",
+      "Emergency meeting: butterflies voted YES unanimously."
+    ];
+
+    const miniNotes = [
+      "System note: the NO button has a flight response and a tiny ego.",
+      "Diagnostic: feelings.exe is running hot (in a romantic way).",
+      "Security: NO is attempting to escape the sandbox.",
+      "Patch notes: nerfed sadness, buffed giggles.",
+      "Breaking: YES is looking *very* clickable today."
+    ];
+
+    const toastLines = [
+      "Achievement unlocked: UI Flirt.",
+      "Achievement unlocked: Certified NO Chaser.",
+      "You gained +1 Charm (probably).",
+      "Butterflies are chanting your name. Quietly.",
+      "NO button: “this is harassment (affectionate).”"
+    ];
+
+    const datePlans = [
+      "A walk + hot chocolate + pretending we’re in a movie scene.",
+      "Pizza + a dumb comedy + stealing the last slice politely (not).",
+      "Arcade date where I lose on purpose (I won’t).",
+      "Coffee + a bookstore + judging covers like professionals.",
+      "Stargazing + snacks + me overexplaining constellations."
+    ];
+
+    const nicknames = [
+      "Captain Cutie",
+      "CEO of My Heart",
+      "Chief Butterfly Officer",
+      "The Reason I’m Smiling",
+      "My Favorite Plot Twist"
+    ];
+
+    const yesLines = [
+      "YESSS! You just activated Maximum Sparkle Protocol.",
+      () => `Official announcement: ${to} just made ${from} dangerously happy.`,
+      () => `Valentine perk unlocked: “${datePlans[Math.floor(Math.random()*datePlans.length)]}”`
+    ];
+
+    // Sparkle trail
+    let lastSparkle = 0;
+    function makeSparkle(x,y){
+      if (prefersReduced) return;
+      const s = document.createElement("div");
+      s.className = "sparkle";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      const sz = 7 + Math.random()*9;
+      s.style.width = sz + "px";
+      s.style.height = sz + "px";
+      s.style.filter = `drop-shadow(0 0 10px rgba(255,211,106,${0.15 + Math.random()*0.35}))`;
+      document.body.appendChild(s);
+      setTimeout(()=> s.remove(), 700);
+    }
+    function onPointerMove(e){
+      const now = performance.now();
+      if (now - lastSparkle < CONFIG.sparkleRateMs) return;
+      lastSparkle = now;
+      const x = e.clientX ?? (e.touches && e.touches[0]?.clientX);
+      const y = e.clientY ?? (e.touches && e.touches[0]?.clientY);
+      if (typeof x === "number" && typeof y === "number") makeSparkle(x,y);
+    }
+    window.addEventListener("pointermove", onPointerMove, {passive:true});
+    window.addEventListener("touchmove", onPointerMove, {passive:true});
+
+    // Helpers
+    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+    function hypot(dx,dy){ return Math.sqrt(dx*dx + dy*dy); }
+    function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+    // Toast
+    let toastTimer = null;
+    function showToast(msg, ms=900){
+      toast.textContent = msg;
+      toast.classList.add("show");
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=> toast.classList.remove("show"), ms);
+    }
+
+    // Typewriter-ish status (interruptable)
+    let typeToken = 0;
+    function typeStatus(text){
+      typeToken++;
+      const token = typeToken;
+      statusText.textContent = "";
+      let i = 0;
+
+      const speed = prefersReduced ? 0 : CONFIG.typeSpeedMs;
+      const step = () => {
+        if (token !== typeToken) return;
+        statusText.textContent += text[i] || "";
+        i++;
+        if (i <= text.length){
+          if (speed === 0) {
+            statusText.textContent = text;
+            return;
+          }
+          setTimeout(step, speed);
+        }
+      };
+      step();
+    }
+
+    function nudgeCard(){
+      if (prefersReduced) return;
+      card.classList.remove("nudge");
+      // force reflow
+      void card.offsetWidth;
+      card.classList.add("nudge");
+    }
+
+    function burstSparklesNear(el){
+      if (prefersReduced) return;
+      const r = el.getBoundingClientRect();
+      const cx = r.left + r.width/2;
+      const cy = r.top + r.height/2;
+      for(let i=0;i<12;i++){
+        setTimeout(()=>{
+          makeSparkle(cx + (Math.random()*90-45), cy + (Math.random()*70-35));
+        }, i*14);
+      }
+    }
+
+    // Positions
+    const pos = { yes: { left: 0, top: 0 }, no: { left: 0, top: 0 } };
+
+    function applyPositions(){
+      yesBtn.style.left = pos.yes.left + "px";
+      yesBtn.style.top  = pos.yes.top + "px";
+      noBtn.style.left  = pos.no.left + "px";
+      noBtn.style.top   = pos.no.top + "px";
+    }
+
+    function layoutButtonsInitial(){
+      const rowW = btnRow.clientWidth;
+      const rowH = btnRow.clientHeight;
+
+      const yesR = yesBtn.getBoundingClientRect();
+      const noR  = noBtn.getBoundingClientRect();
+
+      const yesW = yesR.width || 120;
+      const yesH = yesR.height || 44;
+      const noW  = noR.width  || 90;
+      const noH  = noR.height || 32;
+
+      const pad = 12;
+
+      pos.yes.left = pad;
+      pos.yes.top  = clamp(rowH - yesH - pad, 0, rowH - yesH);
+
+      pos.no.left = clamp(rowW - noW - pad, pad, rowW - noW - pad);
+      pos.no.top  = pad;
+
+      applyPositions();
+    }
+
+    // State
+    let noCount = 0;
+    let alreadyYes = false;
+    const pointer = { x: null, y: null, inside: false };
+
+    const logLines = [];
+    function log(msg){
+      const t = new Date();
+      const hh = String(t.getHours()).padStart(2,"0");
+      const mm = String(t.getMinutes()).padStart(2,"0");
+      const ss = String(t.getSeconds()).padStart(2,"0");
+      logLines.unshift(`[${hh}:${mm}:${ss}] ${msg}`);
+      logLines.splice(7);
+      logBox.textContent = logLines.join("\n");
+    }
+
+    function setMeter(pct){
+      const p = clamp(Math.round(pct), 0, 100);
+      meterFill.style.width = p + "%";
+      meterPct.textContent = p + "%";
+    }
+
+    function setVote(yesPct){
+      const p = clamp(Math.round(yesPct), 0, 100);
+      voteFill.style.width = p + "%";
+      votePct.textContent = `Yes: ${p}%`;
+    }
+
+    function updateHud(){
+      if (alreadyYes) return;
+
+      const romance = 8 + Math.min(noCount, 22) * 4; // ramps up
+      setMeter(romance);
+
+      if (noCount === 0) meterLabel.textContent = "Romance Engine";
+      else if (noCount < 4) meterLabel.textContent = "Romance Engine (warming up)";
+      else if (noCount < 9) meterLabel.textContent = "Romance Engine (overclocked)";
+      else meterLabel.textContent = "Romance Engine (unstoppable)";
+
+      // Butterfly committee: trends toward YES as you fight the UI
+      const vote = 52 + Math.min(noCount, 20) * 2 + (Math.random()*6 - 3);
+      setVote(vote);
+
+      if (noCount > 0 && noCount % 3 === 0){
+        miniNote.childNodes[0].textContent = pick(miniNotes) + " ";
+      }
+
+      // Badge “level”
+      const lvl = Math.min(9, Math.floor(noCount / 2));
+      badgeText.textContent = lvl === 0 ? "Sparkle Mode: ON" : `Sparkle Mode: CHAOS L${lvl}`;
+    }
+
+    function scaleYes(){
+      const s = 1 + Math.min(noCount, 12) * 0.06;
+      yesBtn.style.transform = `scale(${s})`;
+      yesBtn.style.filter = `brightness(${1 + Math.min(noCount, 12)*0.03})`;
+      if (noCount >= 8) yesBtn.textContent = "Yes, obviously 💘";
+      else if (noCount >= 4) yesBtn.textContent = "Yes pls 💘";
+      else yesBtn.textContent = "Yes 💘";
+    }
+
+    function updateNoUI(){
+      if (alreadyYes) return;
+      noCountEl.textContent = String(noCount);
+      scaleYes();
+      updateHud();
+    }
+
+    function randomNoLabel(){
+      const labels = ["No 🙃","Nope 🏃","Nah 😤","404: No","Not today 🥸","Nice try ❌","Absolutely not (jk)"];
+      return pick(labels);
+    }
+
+    function moveNoButton(avoidX, avoidY){
+      if (alreadyYes) return;
+
+      const row = btnRow.getBoundingClientRect();
+      const noR = noBtn.getBoundingClientRect();
+      const yesR = yesBtn.getBoundingClientRect();
+
+      const noW = noR.width;
+      const noH = noR.height;
+
+      const pad = CONFIG.dodgePadding;
+
+      const maxX = btnRow.clientWidth - noW - pad;
+      const maxY = btnRow.clientHeight - noH - pad;
+
+      const yesCx = (yesR.left + yesR.width/2) - row.left;
+      const yesCy = (yesR.top + yesR.height/2) - row.top;
+
+      const avoid = (typeof avoidX === "number" && typeof avoidY === "number")
+        ? { x: avoidX - row.left, y: avoidY - row.top }
+        : null;
+
+      let best = { score: -Infinity, x: pos.no.left, y: pos.no.top };
+
+      for (let i=0; i<CONFIG.moveTries; i++){
+        const x = clamp(Math.random()*maxX, pad, maxX);
+        const y = clamp(Math.random()*maxY, pad, maxY);
+
+        const cx = x + noW/2;
+        const cy = y + noH/2;
+
+        const dYes = hypot(cx - yesCx, cy - yesCy);
+        const dAvoid = avoid ? hypot(cx - avoid.x, cy - avoid.y) : 0;
+
+        const score = (avoid ? dAvoid*1.40 : 0) + dYes*0.70 + Math.random()*35;
+        if (score > best.score) best = { score, x, y };
+      }
+
+      pos.no.left = best.x;
+      pos.no.top = best.y;
+      applyPositions();
+
+      // Cosmetic trolling
+      if (Math.random() < 0.45) noBtn.textContent = randomNoLabel();
+    }
+
+    // Rage swap
+    let lastSwapAt = 0;
+    function rageSwapChance(){
+      return Math.min(0.90, CONFIG.rageSwapChanceBase + noCount * CONFIG.rageSwapChancePerNo);
+    }
+
+    function maybeRageSwap(){
+      if (!CONFIG.rageMode) return false;
+      if (alreadyYes) return false;
+
+      const now = performance.now();
+      if (now - lastSwapAt < CONFIG.rageSwapCooldownMs) return false;
+      if (Math.random() > rageSwapChance()) return false;
+
+      lastSwapAt = now;
+
+      const tmp = { left: pos.yes.left, top: pos.yes.top };
+      pos.yes.left = pos.no.left; pos.yes.top = pos.no.top;
+      pos.no.left = tmp.left;     pos.no.top = tmp.top;
+
+      applyPositions();
+      badgeText.textContent = "Sparkle Mode: RAGE";
+      nudgeCard();
+      burstSparklesNear(btnRow);
+      log("Rage swap executed (legally questionable).");
+      return true;
+    }
+
+    function proximityDodgeCheck(){
+      if (alreadyYes) return;
+      if (!pointer.inside) return;
+      if (typeof pointer.x !== "number" || typeof pointer.y !== "number") return;
+
+      const noR = noBtn.getBoundingClientRect();
+      const cx = noR.left + noR.width/2;
+      const cy = noR.top + noR.height/2;
+      const dist = hypot(pointer.x - cx, pointer.y - cy);
+
+      const radius = CONFIG.proximityRadiusBase + Math.min(noCount, 18) * CONFIG.proximityGrowthPerNo;
+
+      if (dist < radius){
+        const swapped = maybeRageSwap();
+        if (!swapped) moveNoButton(pointer.x, pointer.y);
+      }
+    }
+
+    function noInteract(){
+      if (alreadyYes) return; // HARD LOCK AFTER YES
+
+      noCount++;
+      updateNoUI();
+
+      typeStatus(pick(noLines));
+      if (noCount % 2 === 0) showToast(pick(toastLines), 1000);
+
+      const swapped = maybeRageSwap();
+      if (!swapped) moveNoButton(pointer.x, pointer.y);
+
+      burstSparklesNear(noBtn);
+      log(`NO attempted (${noCount}). Button fled successfully.`);
+    }
+
+    arena.addEventListener("pointermove", (e) => {
+      if (alreadyYes) return;
+      pointer.x = e.clientX;
+      pointer.y = e.clientY;
+      pointer.inside = true;
+      proximityDodgeCheck();
+    }, {passive:true});
+    arena.addEventListener("pointerleave", () => { pointer.inside = false; });
+
+    noBtn.addEventListener("pointerenter", () => { noInteract(); });
+    noBtn.addEventListener("click", (e) => { e.preventDefault(); noInteract(); });
+    noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); noInteract(); }, {passive:false});
+    noBtn.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); noInteract(); }
+    });
+
+    // Celebration canvas
+    const canvas = document.getElementById("fx");
+    const ctx = canvas.getContext("2d");
+    let W=0,H=0, dpr=1;
+
+    function resize(){
+      dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      W = Math.floor(window.innerWidth);
+      H = Math.floor(window.innerHeight);
+      canvas.width = Math.floor(W * dpr);
+      canvas.height = Math.floor(H * dpr);
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+
+      layoutButtonsInitial();
+    }
+    window.addEventListener("resize", resize);
+
+    function rand(min,max){ return min + Math.random()*(max-min); }
+
+    let particles = [];
+    let animId = null;
+    let celebrating = false;
+
+    function spawnCelebration(){
+      const colors = ["#ff4fd8","#ff2f6d","#ffd36a","#44ffcc","#ffffff"];
+      const n = 240;
+
+      for(let i=0;i<n;i++){
+        const type = Math.random() < 0.20 ? "heart" : "confetti";
+        particles.push({
+          type,
+          x: rand(W*0.20, W*0.80),
+          y: rand(H*0.20, H*0.55),
+          vx: rand(-3.6, 3.6),
+          vy: rand(-7.4, -2.2),
+          g: rand(0.10, 0.24),
+          r: rand(3, 8),
+          rot: rand(0, Math.PI*2),
+          vr: rand(-0.20, 0.20),
+          life: rand(80, 160),
+          color: colors[Math.floor(Math.random()*colors.length)],
+          alpha: 1
+        });
+      }
+    }
+
+    function drawHeart(x,y,size,color,rot,alpha){
+      ctx.save();
+      ctx.translate(x,y);
+      ctx.rotate(rot);
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = color;
+
+      const s = size;
+      ctx.beginPath();
+      ctx.moveTo(0, s*0.35);
+      ctx.bezierCurveTo(0, -s*0.15, -s*0.55, -s*0.15, -s*0.55, s*0.25);
+      ctx.bezierCurveTo(-s*0.55, s*0.65, 0, s*0.9, 0, s*1.15);
+      ctx.bezierCurveTo(0, s*0.9, s*0.55, s*0.65, s*0.55, s*0.25);
+      ctx.bezierCurveTo(s*0.55, -s*0.15, 0, -s*0.15, 0, s*0.35);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function tick(){
+      ctx.clearRect(0,0,W,H);
+
+      if (celebrating){
+        ctx.save();
+        ctx.globalAlpha = 0.10;
+        const grad = ctx.createRadialGradient(W*0.5, H*0.35, 10, W*0.5, H*0.35, Math.max(W,H)*0.85);
+        grad.addColorStop(0,"#ff4fd8");
+        grad.addColorStop(0.55,"#ffd36a");
+        grad.addColorStop(1,"transparent");
+        ctx.fillStyle = grad;
+        ctx.fillRect(0,0,W,H);
+        ctx.restore();
+      }
+
+      particles.forEach(p=>{
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += p.g;
+        p.rot += p.vr;
+        p.life -= 1;
+
+        const fadeStart = 28;
+        if (p.life < fadeStart) p.alpha = Math.max(0, p.life / fadeStart);
+
+        if (p.type === "confetti"){
+          ctx.save();
+          ctx.globalAlpha = p.alpha;
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.r, -p.r*0.55, p.r*2.2, p.r*1.2);
+          ctx.restore();
+        }else{
+          drawHeart(p.x, p.y, p.r*1.9, p.color, p.rot, p.alpha);
+        }
+      });
+
+      particles = particles.filter(p => p.life > 0 && p.y < H + 60);
+
+      if (particles.length > 0){
+        animId = requestAnimationFrame(tick);
+      }else{
+        celebrating = false;
+        animId = null;
+        ctx.clearRect(0,0,W,H);
+      }
+    }
+
+    function startFx(){
+      if (prefersReduced) return;
+      celebrating = true;
+      spawnCelebration();
+      if (!animId) tick();
+    }
+
+    function restart(){
+      location.href = location.pathname + location.search;
+    }
+
+    function doYes(){
+      if (alreadyYes) return;
+      alreadyYes = true;
+
+      // LOCK GAME until restart
+      document.body.classList.add("game-locked");
+      pointer.inside = false;
+
+      questionText.textContent = `Yay! ${to}, will you be my Valentine? (Confirmed ✅)`;
+      typeStatus("You clicked YES. Congratulations. This is now a legally adorable situation.");
+
+      const nickname = pick(nicknames);
+
+      resultBox.classList.add("show");
+      resultLine1.textContent = yesLines[0];
+      resultLine2.textContent = (typeof yesLines[1] === "function") ? yesLines[1]() : yesLines[1];
+      resultLine3.textContent = `Title granted: “${nickname}”. (Do not resist.)`;
+
+      actions.style.display = "flex";
+
+      // Visual lock (extra safety)
+      noBtn.disabled = true;
+      yesBtn.disabled = true;
+      noBtn.style.opacity = 0.45;
+      noBtn.style.cursor = "not-allowed";
+      yesBtn.style.cursor = "default";
+
+      badgeText.textContent = "Sparkle Mode: LEGENDARY";
+      miniNote.childNodes[0].textContent = "Status: relationship DLC successfully installed. ";
+      log("YES confirmed. Deploying confetti…");
+      showToast("YES accepted. Butterflies are doing taxes out of excitement.", 1400);
+
+      burstSparklesNear(yesBtn);
+      startFx();
+
+      card.scrollTop = 0;
+      meterLabel.textContent = "Romance Engine (victory)";
+      setMeter(100);
+      voteLabel.textContent = "Butterfly Committee";
+      setVote(100);
+    }
+
+    yesBtn.addEventListener("click", (e)=>{ e.preventDefault(); doYes(); });
+    yesBtn.addEventListener("touchstart", (e)=>{ e.preventDefault(); doYes(); }, {passive:false});
+    yesBtn.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); doYes(); }
+    });
+
+    restartBtn.addEventListener("click", (e)=>{ e.preventDefault(); restart(); });
+
+    // Init
+    requestAnimationFrame(() => {
+      resize();
+      setMeter(8);
+      setVote(52);
+      log("Boot: Cupid driver loaded.");
+      log("Boot: NO button anxiety calibrated.");
+      layoutButtonsInitial();
+      updateHud();
+    });
+  </script>
+</body>
+</html>
