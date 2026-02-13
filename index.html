@@ -128,7 +128,7 @@
       background: linear-gradient(180deg, var(--card), var(--card2));
       border:1px solid rgba(255,255,255,.16);
       border-radius: var(--radius);
-      box-shadow: var(--shadow);
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       padding: 22px 22px 18px;
@@ -474,12 +474,25 @@
       filter: saturate(.95) brightness(.95);
     }
 
+    /* PHONE: LESS MARGIN + BIGGER CONTENT */
     @media (max-width: 740px){
       :root{
-        --page-pad: 16px;
-        --play-h: clamp(220px, 36vh, 380px);
+        --page-pad: 10px;              /* reduced outer margin */
+        --play-h: clamp(220px, 38vh, 380px);
       }
+      .card{
+        width: 98vw;
+        padding: 16px 14px 14px;       /* reduced inner padding */
+        border-radius: 18px;
+      }
+      .question{
+        padding: 12px 12px 14px;       /* tighter */
+        border-radius: 16px;
+      }
+      .mascot{ width: min(260px, 52vw); }
+      .sub{ margin-bottom: 12px; }
     }
+
     @media (max-height: 720px){
       .wrap{ align-items:flex-start; }
       .card{ margin-top: 10px; }
@@ -558,7 +571,7 @@
 
       <section class="question" id="arena">
         <div class="nameLine">
-          <span class="pill">To: <b id="toName">you</b></span>
+          <span class="pill">To: <b id="toName">loveliest love</b></span>
           <span class="pill">From: <b id="fromName">someone adorable</b></span>
           <span class="pill">No-clicks: <b id="noCount">0</b></span>
         </div>
@@ -613,7 +626,7 @@
 
   <script>
     const CONFIG = {
-      defaultTo: "you",
+      defaultTo: "loveliest love",
       defaultFrom: "someone adorable",
 
       sparkleRateMs: 20,
@@ -640,7 +653,6 @@
     const yesBtn = document.getElementById("yesBtn");
     const noBtn = document.getElementById("noBtn");
     const btnRow = document.getElementById("btnRow");
-    const arena = document.getElementById("arena");
     const card = document.getElementById("card");
 
     const noCountEl = document.getElementById("noCount");
@@ -812,7 +824,6 @@
     function nudgeCard(){
       if (prefersReduced) return;
       card.classList.remove("nudge");
-      // force reflow
       void card.offsetWidth;
       card.classList.add("nudge");
     }
@@ -893,7 +904,7 @@
     function updateHud(){
       if (alreadyYes) return;
 
-      const romance = 8 + Math.min(noCount, 22) * 4; // ramps up
+      const romance = 8 + Math.min(noCount, 22) * 4;
       setMeter(romance);
 
       if (noCount === 0) meterLabel.textContent = "Romance Engine";
@@ -901,7 +912,6 @@
       else if (noCount < 9) meterLabel.textContent = "Romance Engine (overclocked)";
       else meterLabel.textContent = "Romance Engine (unstoppable)";
 
-      // Butterfly committee: trends toward YES as you fight the UI
       const vote = 52 + Math.min(noCount, 20) * 2 + (Math.random()*6 - 3);
       setVote(vote);
 
@@ -909,7 +919,6 @@
         miniNote.childNodes[0].textContent = pick(miniNotes) + " ";
       }
 
-      // Badge “level”
       const lvl = Math.min(9, Math.floor(noCount / 2));
       badgeText.textContent = lvl === 0 ? "Sparkle Mode: ON" : `Sparkle Mode: CHAOS L${lvl}`;
     }
@@ -977,7 +986,6 @@
       pos.no.top = best.y;
       applyPositions();
 
-      // Cosmetic trolling
       if (Math.random() < 0.45) noBtn.textContent = randomNoLabel();
     }
 
@@ -1028,7 +1036,7 @@
     }
 
     function noInteract(){
-      if (alreadyYes) return; // HARD LOCK AFTER YES
+      if (alreadyYes) return;
 
       noCount++;
       updateNoUI();
@@ -1043,18 +1051,31 @@
       log(`NO attempted (${noCount}). Button fled successfully.`);
     }
 
-    arena.addEventListener("pointermove", (e) => {
+    /* Gameplay tracking ONLY inside the playground */
+    btnRow.addEventListener("pointermove", (e) => {
       if (alreadyYes) return;
       pointer.x = e.clientX;
       pointer.y = e.clientY;
       pointer.inside = true;
       proximityDodgeCheck();
     }, {passive:true});
-    arena.addEventListener("pointerleave", () => { pointer.inside = false; });
+    btnRow.addEventListener("pointerleave", () => { pointer.inside = false; });
 
-    noBtn.addEventListener("pointerenter", () => { noInteract(); });
-    noBtn.addEventListener("click", (e) => { e.preventDefault(); noInteract(); });
-    noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); noInteract(); }, {passive:false});
+    /* IMPORTANT: avoid double-count on phones.
+       Use pointer events for press/tap, and keep hover-panic only for mouse. [web:206][web:180] */
+    noBtn.addEventListener("pointerenter", (e) => {
+      if (alreadyYes) return;
+      if (e.pointerType !== "mouse") return; // don't treat touch as hover
+      noInteract();
+    });
+
+    noBtn.addEventListener("pointerdown", (e) => {
+      if (alreadyYes) return;
+      if (e.pointerType === "mouse" && e.button !== 0) return; // left click only
+      e.preventDefault(); // prevents compatibility mouse events in many UAs [web:206]
+      noInteract();
+    }, {passive:false});
+
     noBtn.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); noInteract(); }
     });
@@ -1188,7 +1209,6 @@
       if (alreadyYes) return;
       alreadyYes = true;
 
-      // LOCK GAME until restart
       document.body.classList.add("game-locked");
       pointer.inside = false;
 
@@ -1199,12 +1219,11 @@
 
       resultBox.classList.add("show");
       resultLine1.textContent = yesLines[0];
-      resultLine2.textContent = (typeof yesLines[1] === "function") ? yesLines[1]() : yesLines[1];
+      resultLine2.textContent = yesLines[1]();
       resultLine3.textContent = `Title granted: “${nickname}”. (Do not resist.)`;
 
       actions.style.display = "flex";
 
-      // Visual lock (extra safety)
       noBtn.disabled = true;
       yesBtn.disabled = true;
       noBtn.style.opacity = 0.45;
@@ -1226,8 +1245,14 @@
       setVote(100);
     }
 
-    yesBtn.addEventListener("click", (e)=>{ e.preventDefault(); doYes(); });
-    yesBtn.addEventListener("touchstart", (e)=>{ e.preventDefault(); doYes(); }, {passive:false});
+    /* Use pointerdown for YES too (no click/touchstart duplicates) [web:206] */
+    yesBtn.addEventListener("pointerdown", (e) => {
+      if (alreadyYes) return;
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      e.preventDefault();
+      doYes();
+    }, {passive:false});
+
     yesBtn.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); doYes(); }
     });
